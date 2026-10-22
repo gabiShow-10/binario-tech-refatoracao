@@ -1,26 +1,40 @@
 #!/bin/bash
 
-echo "======================================"
-echo " Teste de PATCH e DELETE iniciando..."
-echo "======================================"
-
-sleep 1
-
+# Captura a porta passada via parâmetro do CLI ou usa 3014 como padrão
+PORT=${1:-3014}
+BASE_URL="http://localhost:${PORT}/api/v1"
 LOG_FILE="crud_result.log"
+
+echo "======================================"
+echo " Teste de CRUD Dinâmico na Porta $PORT"
+echo "======================================"
 
 echo "=== INICIANDO TESTES CRUD - $(date) ===" > $LOG_FILE
 
+# 1. Healthcheck (Missão 1)
+echo -e "\n0. Checando Healthcheck..." >> $LOG_FILE
+curl -s "${BASE_URL}/health" | jq . >> $LOG_FILE
+
+# 2. Cadastro 1 e Captura Dinâmica do ID (Missão 3)
 echo -e "\n1. Cadastrando Veículo 1 (DAF)..." >> $LOG_FILE
-curl -s -X POST http://localhost:3013/api/v1/veiculos -H "Content-Type: application/json" -d '{"placa":"ABC-9999","montadora":"DAF","modelo":"XF"}' | jq . >> $LOG_FILE
+RES_POST=$(curl -s -X POST "${BASE_URL}/veiculos" \
+  -H "Content-Type: application/json" \
+  -d '{"placa":"ABC-9999","montadora":"DAF","modelo":"XF"}')
 
-echo -e "\n2. Cadastrando Veículo 2 (Iveco)..." >> $LOG_FILE
-curl -s -X POST http://localhost:3013/api/v1/veiculos -H "Content-Type: application/json" -d '{"placa":"XYZ-8888","montadora":"Volvo","modelo":"FH 540"}' | jq . >> $LOG_FILE
+echo "$RES_POST" | jq . >> $LOG_FILE
 
-echo -e "\n3. Atualizando status do Veículo ID 3..." >> $LOG_FILE
-curl -s -X PATCH http://localhost:3013/api/v1/veiculos/3/status -H "Content-Type: application/json" -d '{"status":"EM_ROTA"}' | jq . >> $LOG_FILE
+# Extrai o ID dinâmico retornado pelo servidor
+ID_CRIADO=$(echo "$RES_POST" | jq -r '.id // .veiculo.id')
 
-echo -e "\n4. Deletando Veículo ID 4..." >> $LOG_FILE
-curl -s -X DELETE http://localhost:3013/api/v1/veiculos/5 | jq . >> $LOG_FILE
+# 3. Atualizando status usando o ID Dinâmico
+echo -e "\n2. Atualizando status do Veículo ID $ID_CRIADO..." >> $LOG_FILE
+curl -s -X PATCH "${BASE_URL}/veiculos/${ID_CRIADO}/status" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"EM_ROTA"}' | jq . >> $LOG_FILE
+
+# 4. Deletando usando o ID Dinâmico
+echo -e "\n3. Deletando Veículo ID $ID_CRIADO..." >> $LOG_FILE
+curl -s -X DELETE "${BASE_URL}/veiculos/${ID_CRIADO}" | jq . >> $LOG_FILE
 
 echo -e "\n=== TESTES FINALIZADOS DE FORMA SEQUENCIAL ===" >> $LOG_FILE
 
@@ -29,8 +43,7 @@ sleep 1
 echo "."
 sleep 1
 echo "."
-sleep 1
 
 echo "====================================================="
-echo " TESTES FINALIZADOS - RESULTADO EM ´crud_result.log´"
+echo " TESTES FINALIZADOS - RESULTADO EM '$LOG_FILE'"
 echo "====================================================="

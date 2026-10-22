@@ -1,54 +1,11 @@
-<<<<<<< HEAD
-=== INICIANDO TESTES CRUD - Wed Oct 14 07:00:13 PM UTC 2026 ===
+=== INICIANDO TESTES CRUD - Thu Oct 22 07:14:49 PM UTC 2026 ===
+
+0. Checando Healthcheck...
 
 1. Cadastrando Veículo 1 (DAF)...
-{
-  "id": 6,
-=======
-=== INICIANDO TESTES CRUD - qui 15 out 2026 13:17:53 -03 ===
 
-1. Cadastrando Veículo 1 (DAF)...
-{
-  "id": 10,
->>>>>>> 18ea5d6 (feat: Prova Aula04 - Resolução e Atualização)
-  "placa": "ABC-9999",
-  "montadora": "DAF",
-  "modelo": "XF",
-  "status": "DISPONIVEL"
-}
+2. Atualizando status do Veículo ID ...
 
-2. Cadastrando Veículo 2 (Iveco)...
-{
-<<<<<<< HEAD
-  "id": 7,
-=======
-  "id": 11,
->>>>>>> 18ea5d6 (feat: Prova Aula04 - Resolução e Atualização)
-  "placa": "XYZ-8888",
-  "montadora": "Volvo",
-  "modelo": "FH 540",
-  "status": "DISPONIVEL"
-}
-
-3. Atualizando status do Veículo ID 3...
-{
-  "mensagem": "Status atualizado com sucesso!",
-  "veiculo": {
-    "id": 3,
-    "placa": "VWX-5555",
-    "montadora": "Volkswagen",
-    "modelo": "Delivery",
-    "status": "EM_ROTA"
-  }
-}
-
-4. Deletando Veículo ID 4...
-{
-<<<<<<< HEAD
-  "erro": "Veiculo nao encontrado."
-=======
-  "mensagem": "Veiculo ID 5 removido com sucesso."
->>>>>>> 18ea5d6 (feat: Prova Aula04 - Resolução e Atualização)
-}
+3. Deletando Veículo ID ...
 
 === TESTES FINALIZADOS DE FORMA SEQUENCIAL ===
