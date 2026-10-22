@@ -1,0 +1,165 @@
+04 - Atividade | BATERIA DE EXERCICIOS DE FIXACAO
+Exercicio 01: 
+
+Efetue uma requisicao GET buscando apenas o veiculo de ID 1 e exiba o resultado formatado com 'jq'. 
+ node frota_api.js &
+[2] 3114
+gabriel_b_silva11@cloudshell:~/curso-pbe1/binario_tech/aula04$ curl -s http://localhost:3000/api/v1/veiculos/1 | jq .
+{
+  "id": 1,
+  "placa": "ABC-1234",
+  "montadora": "Scania",
+  "modelo": "R450",
+  "status": "MANUTENCAO"
+}
+[2]+  Done                    node frota_api.js
+
+
+Exercicio 02: 
+
+Cadastre um novo caminhao da montadora 'Volvo' (modelo 'FH 540', placa 'KLL-9090') enviando uma requisicao POST via cURL ou httpie. Verifique se o retorno e o status HTTP 201 Created. 
+curl -i -X POST http://localhost:3000/api/v1/veiculos \
+  -H "Content-Type: application/json" \
+  -d '{"placa":"KLL-9090","montadora":"Volvo","modelo":"FH 540"}'
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 87
+ETag: W/"57-2Faqz8iKS/VBEOL6KcAf5uuqNmI"
+Date: Thu, 06 Aug 2026 19:21:11 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":4,"placa":"KLL-9090","montadora":"Volvo","modelo":"FH 540","status":"DISPONIVEL"}
+
+
+Exercicio 03: 
+
+Tente cadastrar um veiculo sem passar o campo 'placa' no body da requisicao. Confirme se a API retorna o status 400 Bad Request com a mensagem de erro apropriada. 
+curl -i -X POST http://localhost:3000/api/v1/veiculos \
+  -H "Content-Type: application/json" \
+  -d '{"montadora":"Volvo","modelo":"FH 540"}'
+HTTP/1.1 400 Bad Request
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 67
+ETag: W/"43-8CSMur3LgF+LHoWk8xOmduHqtNA"
+Date: Thu, 06 Aug 2026 19:21:41 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"erro":"Campos 'placa', 'montadora' e 'modelo' sao obrigatorios."}
+
+
+Exercicio 04: 
+
+Faça uma requisicao GET filtrando os veiculos por query param: 'http://localhost:3000/api/v1/veiculos?status=DISPONIVEL&#39;. 
+node frota_api.js &
+[1] 4778
+gabriel_b_silva11@cloudshell:~/curso-pbe1/binario_tech/aula04$ [Binario Tech] API de Frotas rodando em htpp://localhost:3000
+curl -s "http://localhost:3000/api/v1/veiculos?status=DISPONIVEL" | jq .
+[
+  {
+    "id": 1,
+    "placa": "ABC-1234",
+    "montadora": "Scania",
+    "modelo": "R450",
+    "status": "DISPONIVEL"
+  }
+]
+
+
+Exercicio 05: 
+
+Atualize o status do veiculo de ID 3 para 'EM_ROTA' utilizando a rota PATCH. 
+curl -s -X PATCH http://localhost:3000/api/v1/veiculos/3/status \
+  -H "Content-Type: application/json" \
+  -d '{"status":"EM_ROTA"}' | jq .
+{
+  "mensagem": "Status atualizado com sucesso!",
+  "veiculo": {
+    "id": 3,
+    "placa": "KLL-9090",
+    "montadora": "Volvo",
+    "modelo": "FH 540",
+    "status": "EM_ROTA"
+  }
+}
+
+Exercicio 06: 
+
+Tente atualizar ou deletar um veiculo com um ID inexistente (ex: ID 99) e valide se o status code retornado e 404 Not Found. 
+curl -i -X DELETE http://localhost:3000/api/v1/veiculos/99
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 34
+ETag: W/"22-WeIgOtnMev695NFLvVmO/fE386k"
+Date: Thu, 06 Aug 2026 19:32:42 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+
+Exercicio 07: 
+
+Adicione uma nova rota PUT na API (`/api/v1/veiculos/:id`) que permite substituir todos os dados de um veiculo de uma so vez. 
+curl -s -X PUT http://localhost:3000/api/v1/veiculos/1 -H "Content-Type: application/json" -d '{"placa":"BBB-0000","montadora":"Scania Novo","modelo":"R500","status":"EM_ROTA"}' | jq .
+{
+  "mensagem": "Veiculo atualizado completamente com sucesso!",
+  "veiculo": {
+    "id": 1,
+    "placa": "BBB-0000",
+    "montadora": "Scania Novo",
+    "modelo": "R500",
+    "status": "EM_ROTA"
+  }
+}
+
+
+Exercicio 08: 
+
+Crie um script Bash chamado 'teste_crud.sh' que executa sequencialmente o cadastro de 2 veiculos, atualiza 1 deles e deleta o outro, registrando os logs em 'crud_result.log'.
+node frota_api.js &
+[1] 10819
+gabriel_b_silva11@cloudshell:~/curso-pbe1/binario_tech/aula04$ [Binario Tech] API de Frotas rodando em htpp://localhost:3000
+./teste_crud.sh
+gabriel_b_silva11@cloudshell:~/curso-pbe1/binario_tech/aula04$ cat crud_result.log
+=== INICIANDO TESTES CRUD - Thu Aug  6 07:50:44 PM UTC 2026 ===
+
+1. Cadastrando Veículo 1 (DAF)...
+{
+  "id": 3,
+  "placa": "ABC-9999",
+  "montadora": "DAF",
+  "modelo": "XF",
+  "status": "DISPONIVEL"
+}
+
+2. Cadastrando Veículo 2 (Iveco)...
+{
+  "id": 4,
+  "placa": "XYZ-8888",
+  "montadora": "Iveco",
+  "modelo": "Hi-Way",
+  "status": "DISPONIVEL"
+}
+
+3. Atualizando status do Veículo ID 3...
+{
+  "mensagem": "Status atualizado com sucesso!",
+  "veiculo": {
+    "id": 3,
+    "placa": "ABC-9999",
+    "montadora": "DAF",
+    "modelo": "XF",
+    "status": "EM_ROTA"
+  }
+}
+
+4. Deletando Veículo ID 4...
+{
+  "mensagem": "Veiculo ID 4 removido com sucesso."
+}
+
+=== TESTES FINALIZADOS DE FORMA SEQUENCIAL ===
+
